@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Poet Image Description - When to Describe</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="stylesheet" href="https://cdn.rawgit.com/afeld/bootstrap-toc/v0.4.1/dist/bootstrap-toc.min.css"> 
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css" media="screen" />   
+    <link rel="stylesheet" type="text/css" href="styles/styles.css" media="screen" />
+	<script src="lib/jquery-3.1.1.js"></script>    
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>  
+    <script src="scripts/when.js"></script> 
+    <script src="scripts/whenQuestions.js"></script>
+    <script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v0.4.1/dist/bootstrap-toc.min.js"></script>
+    <script>	    
+	    $(document).ready(function(){
+			//GLOBAL VARIABLES
+			var itemObj;
+			
+				
+			//DEFINE ITEMS
+			var items = [when01,when02,when03,when04,when05,when06,when07,when08];
+
+			// POPULATE SIDEBAR			
+		    var sidebarItems = ""
+			for (var i = 0; i < items.length; i++) {	
+		      var temp = items[i];
+		      sidebarItems += '<li><a href="#'+temp[0].id+'">'+temp[0].name+'</a></li>'
+		    }
+		    $('#sidebar').html(sidebarItems);	
+		    
+		    //POPULATE MAINCOL
+		    var mainColItems = ""
+			for (var i = 0; i < items.length; i++) {	
+		      var temp = items[i];
+		      mainColItems += 	'<h2 id="'+temp[0].id+'" aria-level="3">'+temp[0].name+'</h2>' +
+		      					'<p>'+
+		      					'<img src="'+temp[0].imageThumbURL+'" alt="'+temp[0].altText+'" class="imgThumb">'+
+		      					'<button type="button" class="btn btn-link btn-lg startExample" id="'+temp[0].id+'button">'+
+		      					'<span class="glyphicon glyphicon-circle-arrow-right" aria-hidden="true" style="color: orange; font-size: 1.5em;"></span> START THIS EXAMPLE'+
+		      					'</button>'+
+		      					'</p><hr>'
+		      					
+		    }
+		    $('#whenToDescribeItems').html(mainColItems);	
+		    
+		    $('.startExample').click(function() {	    
+			    var id = this.id.replace('button','');
+				openModal(id);
+			    
+		    });
+		    
+		    
+		    function openModal(id) {
+				clearModal();
+				itemObj = window[id]; 
+				title = itemObj[0].name;
+				var imageOriginalURL = itemObj[0].imageOriginalURL;
+				var imageResizedURL = itemObj[0].imageResizedURL;
+				var imageThumbURL = itemObj[0].imageThumbURL;
+				var imageLinkURL = itemObj[0].imageLinkURL;
+				var altText = itemObj[0].altText;
+				var commentFromExpert = itemObj[0].commentFromExpert;
+
+				$('#ModalTitle').html(title);
+		    	$('.modalThumb').attr('src',imageResizedURL);
+		    	$('.modalThumb').attr('alt',altText);
+		    	$('.modalThumbLink').attr('href',imageLinkURL);
+		    	$('.modalImageLink').attr('href',imageLinkURL);
+		    	
+		    	//Google Analytics Event Tracking - When To Describe - Opened
+				ga('send', {
+				  hitType: 'event',
+				  eventCategory: 'When',
+				  eventAction: 'Opened',
+				  eventLabel: title
+				});
+				$('#whenModal').modal("show");				
+				//STEP 1
+				whenQuestions(itemObj);
+		    }
+		    
+		    function clearModal() {
+			    $('#modalDoneButton').hide();
+			    $('#ModalTitle').empty();
+		    }
+		    
+		    function whenQuestions() {
+			    buildOutWhenQuestions(question01);
+		    }
+		    
+		    function buildOutWhenQuestions(questionNumber) {
+			    var correctPaths = itemObj[0].path;
+			    var actualQuestion = questionNumber[0].name;
+				var matchingQuestionAnswerArray = $.grep(correctPaths, function (element, index) {
+				    return element.question == actualQuestion;
+				});
+				var correctAnswerForThisQuestionBeingBuiltOut = matchingQuestionAnswerArray[0].correctId;
+			    
+			    var html = "<h3>"+questionNumber[0].question+"</h3>";
+			    html += "<form id='questionSetForm' data-questionSetNumber='1'>"
+				for (var i = 0; i < questionNumber[0].answers.length; i++) {	
+			      html += '<label><input type="radio" name="questionSet" value="'+i+'">  '+questionNumber[0].answers[i].option+'</label><br/>'
+			    }
+			    html += "</form>"
+			    
+			    $('#modalContent').html(html);
+			    
+			    $('#modalNextButton').unbind();
+			    $('#modalNextButton').show();
+			    
+			    $('#modalNextButton').click(function() {
+				    $("#ModalTitle").focus();
+					$("#alertWrongAnswer").hide();
+					var checkedValue = $('input[name=questionSet]:checked').val()
+					var newRouteID = questionNumber[0].answers[checkedValue].routeId;
+					
+					//console.log("Selected Value:"+checkedValue);
+					//console.log("Actual Value:"+correctAnswerForThisQuestionBeingBuiltOut);
+					
+					if (checkedValue == correctAnswerForThisQuestionBeingBuiltOut) {
+						//console.log("Correct answer");
+						if (newRouteID.startsWith("END")) {
+							//Google Analytics Event Tracking - When To Describe - Completed
+							ga('send', {
+							  hitType: 'event',
+							  eventCategory: 'When',
+							  eventAction: 'Completed',
+							  eventLabel: actualQuestion
+							});
+							finalWhenStep()
+						} else {
+							var newRouteIDobj = window[newRouteID];
+							buildOutWhenQuestions(newRouteIDobj);
+						}
+					} else {
+						$("#alertWrongAnswer").show();
+					}
+			    });			    
+		    }
+		    
+		    function finalWhenStep() {
+			    //alert(itemObj);
+			    var commentFromExpert = itemObj[0].commentFromExpert;
+			    var html = "<h3>Comments from the Experts</h3>";
+			    html += "<p>"+commentFromExpert+"</p>";
+			    $('#modalContent').html(html);
+			    $('#modalNextButton').hide();
+			    $('#modalDoneButton').show();
+		    }
+		    
+		    //******************** GENRAL FUNCTIONS ********************************************************************************
+
+
+			$("#whenModal").on('shown.bs.modal', function (e) {
+				$("#ModalTitle").focus();
+			});
+		});  
+    </script>
+    <script src="scripts/tableOfContents.js"></script>
+    <script src="scripts/googleAnalytics.js"></script>
+</head>
+<body>
+<a href="#mainContent" class="sr-only">Skip to main content</a>
+
+<!-- BEGIN TOP HEADER/NAVIGATION -->
+<nav class="navbar navbar-default" id="topNavigation">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">
+	      <img src="images/Poet_Training_Tool_white.png" alt="Poet Training Tool Logo" height="37">
+      </a>
+    </div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+	    <li><a href="about.html"><span style="color: #F7931E;">ABOUT</span> Poet</a></li>
+        <li><a href="when.html"><span style="color: #F7931E;">WHEN</span> to Describe</a></li>
+        <li><a href="how.html"><span style="color: #F7931E;">HOW</span> to Describe</a></li>
+        <li><a href="practice.html"><span style="color: #F7931E;">PRACTICE</span> Describing</a></li>
+        <li><a href="mailto:info@diagramcenter.org"><span style="color: #F7931E;">Contact Us</a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+<!-- END TOP HEADER/NAVIGATION -->
+
+<!-- BEGIN TOP PAGE INFO -->
+<a name="mainContent"></a>
+<div role="main">	
+	<div class="row" id="pageInfo">
+	  <div class="col-md-12" style="background-color: #efefef; border-bottom: 5px solid #222F3F;">
+		  <h1 data-toc-skip><span style="color: #F7931E; padding-left: 20px;">WHEN</span> To Describe Images</h1>
+		  <div style="padding-left: 20px;" class="pull-left">
+			  Does an image need to be described? That depends... walk through our interactive "decision tree" to learn about when and how best to make an image accessible.
+			  <br/><br/>
+		  </div>
+		  <div style="margin: 0px 50px 25px 25px;" class="pull-right">
+			  <img src="images/decision_tree_flow_chart_thumb.jpg" alt="decision_tree_flow_chart_thumb" height="200px;"><br/>
+			  <a href="images/decision_tree_flow_chart.jpg" target="_blank">View Full Sized Image</a>
+		  </div>
+	  </div>
+	</div>
+<!-- END TOP PAGE INFO -->
+
+<!-- BEGIN BODY -->
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3" id="leftCol">
+				<nav id="toc" data-spy="affix" data-offset-top="" data-offset-bottom="0" aria-label="Table of Contents">
+					<div class="tocHeader">Table Of Contents</div>
+				</nav>
+	  		</div> 
+	  		<div class="col-md-9" id="mainCol">
+		  	<br/>
+	        <h1 class="mainColHeader" aria-level="2">When to Describe Examples</h1> 
+	        <div id="whenToDescribeItems">
+		        </div> 	
+	  		</div> 
+	  	</div>
+	</div>
+</div>
+<!-- END BODY -->
+
+
+<!-- BEGIN FOOTER -->
+<footer class="footer" id="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 ideaText">
+	            <div style="width: 100%">
+		            <a href="https://www2.ed.gov/about/offices/list/osers/osep/index.html" target="_blank">
+			            <img style="float: left; margin: 0px 25px 40px 0px;" src="images/IDEA-logo.gif" alt="IDEA Logo" width="87" height="60">
+		            </a>
+				</div>
+	            <div style="width: 100%">
+		            <a href="https://www.benetech.org/" target="_blank">
+			            <img style="float: right;margin: 0px 0px 40px 25px;" src="images/benetech_logo_transparent.gif" alt="Benetech Logo" height="60">
+		            </a>
+				</div>
+				<div>
+				    The <a href="http://diagramcenter.org/" target="_blank">DIAGRAM Center</a> is a <a href="http://www.benetech.org/" target="_blank">Benetech</a> initiative supported by the U.S. Department of Education, Office of Special Education Programs (Cooperative Agreement #H327B100001). Opinions expressed herein are those of the authors and do not necessarily represent the position of the U.S. Department of Education. Poet™ is a trademark of Beneficent Technology, Inc. This website is copyright © 2012-2017, Beneficent Technology, Inc.
+				</div>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- END FOOTER -->
+
+<!-- BEGIN WHEN MODAL -->
+<div class="modal fade bs-example-modal-lg" role="dialog" aria-labelledby="ModalTitle" id="whenModal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h1 data-toc-skip tabindex="-1" class="modal-title" id="ModalTitle">Decision Tree</h1>
+      </div>
+      <div class="modal-body">
+	    <div class="alert alert-danger" role="alert" id="alertWrongAnswer" style="display: none;"><strong>Woops, wrong answer.</strong> Select another answer and try again.</div>  
+	  	<div class="step1">
+	  		<div class="row">
+	  			<div class="col-md-6" class="imageHolder">
+		  			<a href="" class="modalThumbLink" target="_blank"><img src="" alt="" class="modalThumb img-responsive"></a>
+		  				<a href="" target="_blank" class="modalImageLink">View Image in Context (in New Browser Tab)</a>
+		  			<br/>
+	  			</div>
+	  			<div class="col-md-6">
+		  			<div id="modalContent">
+
+		  			</div>
+	  			</div>
+	  		</div>
+	  	</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="modalNextButton">Next</button>
+        <button type="button" class="btn btn-primary" id="modalDoneButton" data-dismiss="modal" style="display: none;">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END WHEN MODAL -->
+
+
+</body>
+</html>

@@ -1,0 +1,272 @@
+body {
+	margin: 0px;
+	padding: 0px;
+}
+
+footer {
+	background-color: #FFF;
+	border-top: 5px #222F3F solid;
+}
+
+.infoSectionHeader {
+	background-color: #222F3F;
+	width: 100%;
+	height: 50px;
+	border-radius: 5px;
+	margin-top: 10px;
+	padding-top: 11px;
+	color: #FFFFFF;
+	text-align: center;
+	vertical-align: middle;
+	font-size: 1.4em;
+}
+
+.infoSectionBody {
+	margin: 10px;
+	padding:  10px;
+}
+
+h2 {
+	font-size: 24px;
+}
+
+h3 {
+	font-color: #fff!important;
+}
+
+.descriptionTable table, th, td {
+	border: 1px solid #000;
+	font-size: 12px;
+    padding-left: 3px;
+}
+
+.floatleft {
+	float: left;
+}
+
+.imgThumb {
+	max-height: 150px;
+	max-width: 150px;
+	border: 1px solid #999;
+	border-radius: 5px;
+}
+
+.ideaImage {
+	padding: 20px;
+}
+
+.ideaText {
+	padding-top: 20px;
+}
+
+.modalThumb {
+	border: 1px solid #999;
+	border-radius: 5px;
+	max-height: 400px;
+}
+
+.modal h3 {
+	margin-top: 0px;
+}
+
+input[type=checkbox], input[type=radio] {
+	margin-right: 8px;
+}
+
+/*
+.toc {
+	overflow-y: scroll; 
+	background-color: #efefef; 
+	padding: 10px; 
+	border-radius: 5px;
+}
+
+.stickyToc {
+	position: fixed;
+	top: 10px;
+}
+*/
+
+
+/* MainImage styles control the homepage image and the text block that sits on top of the image */
+.mainImage {
+	background-color: #222F3F; 
+	position: relative;
+}
+
+.mainImage img {
+	border-bottom: 5px solid #222F3F; 
+	opacity: .9;
+}
+
+.mainImage span.textContainer {
+   color: white; 
+   font: bold 45px Helvetica, Sans-Serif; 
+   line-height: 72px;
+   background: rgb(0, 0, 0); /* fallback color */
+   background: rgba(0, 0, 0, 0.7);
+   padding: 10px;
+}
+
+.mainImage span.spacer {
+	padding: 5px;
+}
+
+.mainImage div.textContainer {
+	position: absolute; 
+	bottom: 50px; 
+	right: 75px; 
+	width: 100%;
+	text-align: right;
+}
+
+@media only screen and (max-width : 768px) {
+	.mainImage span.textContainer {
+	   font: bold 25px Helvetica, Sans-Serif; 
+	   line-height: 49px;
+	}
+	.mainImage div.textContainer {
+		bottom: 30px; 
+		right: 40px; 
+	}
+}
+
+.mainColHeader {
+	background-color: #efefef; 
+	padding: 10px; 
+	border-radius: 5px; 
+	font-size: 35px; 
+	width: 100%; 
+	color: #222F3F; 
+	font-weight: 500;
+}
+
+/* BOOTSTRAP OVERRIDES */
+
+.btn-link {
+	font-size: 1.1em;
+	font-color: #333;
+	
+}
+
+.btn-link a{
+	font-color: #333;
+	
+}
+
+.btn-primary {
+	background-color: #F7931E;
+	border: 0px;
+}
+
+.btn-primary:hover {
+	background-color: #D07A15;
+}
+
+.navbar-default {
+	background-color: #222F3F;
+}
+
+.navbar {
+	height: 75px;
+	border-radius: 0px;
+	margin-bottom: 0px;
+}
+
+.navbar-default .navbar-nav>li>a {
+	color: #FFF;
+}
+
+.navbar-default .navbar-nav>li>a:hover {
+	text-decoration: underline;
+	color: #FFF;
+}
+
+/*
+.nav>li>a {
+	padding: 3px 15px;
+	color: #337ab7;
+}
+
+.nav>li>a:focus, .nav>li>a:hover {
+	background-color: #222F3F;
+	color: #FFF;
+	border-radius: 3px;
+}
+*/
+
+.navbar-nav>li {
+	margin-left: 1em;
+}
+
+ol, ul {
+	padding-left: 20px;
+}
+
+label {
+	font-weight: normal;
+}
+
+.tocHeader {
+	padding: 12px 0px 10px 20px; 
+	border-bottom: 1px solid #ccc; 
+	width: 200px; 
+	margin-bottom: 8px;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+
+
+
+/* TOC override styles */
+nav[data-toggle=toc] .nav>li>a {
+/* 	color: #337ab7; */
+}
+
+nav[data-toggle=toc] .nav>.active:focus>a, nav[data-toggle=toc] .nav>.active:hover>a, nav[data-toggle=toc] .nav>.active>a {
+	color: #F7931E;
+	border-left: 2px solid #F7931E; 
+}
+
+nav[data-toggle=toc] .nav>li>a:focus, nav[data-toggle=toc] .nav>li>a:hover {
+	color: #F7931E;
+	border-left: 1px solid #F7931E;
+}
+
+
+/* Styles from the TOC plugin */
+nav[data-toggle='toc'] {
+	  margin-top: 30px;
+	}
+	nav.affix[data-toggle='toc'] {
+	    top: 0px;
+	}
+	
+	
+	/* small screens */
+	@media (max-width: 768px) {
+	  /* override the Affix plugin so that the navigation isn't sticky */
+	  nav.affix[data-toggle='toc'] {
+	    position: static;
+	  }
+	
+	  /* PICK ONE */
+	  /* don't expand nested items, which pushes down the rest of the page when navigating */
+	  nav[data-toggle='toc'] .nav .active .nav {
+	    display: none;
+	  }
+	  /* alternatively, if you *do* want the second-level navigation to be shown (as seen on this page on mobile), use this */
+/*
+	  nav[data-toggle='toc'] .nav .nav {
+	    display: block;
+	  }
+*/
+	}
+
+
+
+
+
+
+
